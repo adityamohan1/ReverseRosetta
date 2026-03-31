@@ -148,28 +148,6 @@ Smoke tests inject a deterministic codon chooser so CI does not require Hugging 
 - Chunked CodonTransformer inference for long ORFs.
 - Tighter integration with MaxEntScan or official SpliceFinder TF2 ports.
 
-## GitHub & documentation website
-
-This repo includes a small static homepage in **`docs/index.html`** for [GitHub Pages](https://pages.github.com/).
-
-1. Create a **new repository** on GitHub (e.g. `ReverseRosetta`), **without** initializing a README (you already have one locally).
-2. On your machine, from the project root:
-
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: ReverseRosetta pipeline"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/ReverseRosetta.git
-   git push -u origin main
-   ```
-
-3. In **`docs/index.html`**, set `USER` and `REPO` in the `<script>` at the bottom (replace `YOUR_GITHUB_USERNAME` and adjust `REPO` if your repo name differs), commit, and push.
-4. On GitHub: **Settings → Pages → Build and deployment → Source**: choose **Deploy from a branch**, branch **`main`**, folder **`/docs`**, Save.
-5. After a minute, the site will be at **`https://YOUR_USERNAME.github.io/ReverseRosetta/`** (URL uses your **username** and **repository name**).
-
-Optional: set the repo **Website** field (**Settings → General → Website**) to that Pages URL so it shows on the repository front page.
-
 ## License
 
 MIT (project scaffold). Third-party models (CodonTransformer, SpliceFinder) follow their respective licenses.
