@@ -1,0 +1,20 @@
+# Example ReverseRosetta YAML (pass with: reverserosetta --config examples/config.example.yaml --input ...)
+
+host: human
+column_index: 4
+emit_stop_codon: false
+max_iterations: 800
+splice_donor_threshold: 0.65
+splice_acceptor_threshold: 0.65
+splice_window_radius: 80
+repeat_homopolymer_max: 8
+repeat_kmer_size: 6
+
+# Optional: point to SpliceFinder downloaded CNN.h5 directory (requires tensorflow extra).
+use_splicefinder_keras: false
+# splicefinder_model_dir: /path/to/SpliceFinder_sourcecode/test
+
+weights:
+  w_codon: 1.0
+  w_splice: 1.0
+  w_repeat: 1.0

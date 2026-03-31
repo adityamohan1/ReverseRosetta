@@ -1,0 +1,18 @@
+# Core runtime (aligned with CodonTransformer: numpy<2)
+pandas>=2.0,<3
+openpyxl>=3.1
+pydantic>=2.5
+pydantic-settings>=2.2
+PyYAML>=6.0
+typer[all]>=0.12
+numpy>=1.26,<2
+CodonTransformer>=1.6.7
+torch>=2.0
+transformers>=4.40
+
+# Optional: SpliceFinder Keras models via tensorflow.keras
+# pip install 'tensorflow>=2.14,<3'
+
+# Dev
+# pytest>=7.4
+# pytest-cov>=4.1

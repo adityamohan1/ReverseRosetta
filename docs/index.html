@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReverseRosetta — Human codon optimization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f1419;
+      --paper: #f4f0e8;
+      --accent: #c45c26;
+      --accent-dim: #8b3d18;
+      --muted: #5c5a54;
+      --card: #fffefb;
+      --border: #d8d3c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--paper);
+      background-image:
+        radial-gradient(ellipse 120% 80% at 100% 0%, rgba(196, 92, 38, 0.08), transparent 50%),
+        radial-gradient(ellipse 80% 60% at 0% 100%, rgba(15, 20, 25, 0.04), transparent 45%);
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 1.5rem;
+    }
+    h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-weight: 600;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.15;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.02em;
+    }
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 36em;
+      margin: 0;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+    a.btn {
+      display: inline-block;
+      padding: 0.55rem 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 2px;
+      font-size: 0.95rem;
+    }
+    a.btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent-dim);
+    }
+    a.btn-primary:hover { background: var(--accent-dim); }
+    a.btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 2px solid var(--ink);
+    }
+    a.btn-ghost:hover { background: var(--ink); color: var(--paper); }
+    section {
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.35rem;
+      margin: 0 0 0.75rem;
+      color: var(--accent-dim);
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.35rem;
+      margin-bottom: 1rem;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+    ul { margin: 0.25rem 0; padding-left: 1.2rem; }
+    li { margin: 0.35rem 0; }
+    code, pre {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 0.88em;
+    }
+    pre {
+      background: var(--ink);
+      color: #e8e4dc;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+      border-radius: 2px;
+      margin: 0.5rem 0 0;
+      line-height: 1.45;
+    }
+    pre .prompt { color: #7a9e7e; user-select: none; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent-dim); }
+    .note {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>ReverseRosetta</h1>
+      <p class="tagline">
+        Excel in, optimized DNA out: human codon usage, restriction-site removal,
+        splice-aware and repeat-aware refinement—built around <strong>CodonTransformer</strong>
+        and optional <strong>SpliceFinder</strong>-style scoring.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" id="link-repo" href="#">View on GitHub</a>
+        <a class="btn btn-ghost" id="link-readme" href="#">README</a>
+      </div>
+      <p class="note">Edit the two lines in the <code>&lt;script&gt;</code> at the bottom of this file to set your GitHub <code>USER</code> and <code>REPO</code> name.</p>
+    </header>
+
+    <section>
+      <h2>Install</h2>
+      <div class="card">
+        <p>Python 3.11+ recommended.</p>
+        <pre id="clone-snippet"><span class="prompt">$</span> git clone https://github.com/YOUR_USER/ReverseRosetta.git
+<span class="prompt">$</span> cd ReverseRosetta
+<span class="prompt">$</span> python -m venv .venv &amp;&amp; source .venv/bin/activate
+<span class="prompt">$</span> pip install -e ".[dev]"</pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>Run</h2>
+      <div class="card">
+        <pre><span class="prompt">$</span> python -m reverserosetta \
+    --input examples/ReverseRosettaTemplate.xlsx \
+    --sheet Sheet1 \
+    --output results/reverserosetta_output.xlsx \
+    --host human</pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>What it does</h2>
+      <div class="card">
+        <ul>
+          <li>Reads amino acid sequences from a chosen Excel column (default: 4th column).</li>
+          <li>Generates human-optimized coding DNA with CodonTransformer.</li>
+          <li>Removes a fixed list of restriction sites via synonymous substitutions.</li>
+          <li>Reduces cryptic splice-like signals (heuristic or optional Keras SpliceFinder models).</li>
+          <li>Improves manufacturability scores (homopolymers, repeats, local complexity).</li>
+          <li>Exports Excel, CSV, and optional JSON audit logs.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        Documentation lives in the repository <a id="link-readme-foot" href="#">README</a>.
+        Licensed under MIT unless noted otherwise; third-party models have their own licenses.
+      </p>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var USER = "YOUR_GITHUB_USERNAME";
+      var REPO = "ReverseRosetta";
+      var base = "https://github.com/" + USER + "/" + REPO;
+      var rawReadme = base + "/blob/main/README.md";
+      document.getElementById("link-repo").href = base;
+      document.getElementById("link-readme").href = rawReadme;
+      document.getElementById("link-readme-foot").href = rawReadme;
+      var pre = document.getElementById("clone-snippet");
+      if (pre && USER !== "YOUR_GITHUB_USERNAME") {
+        pre.innerHTML =
+          '<span class="prompt">$</span> git clone ' +
+          base +
+          ".git\n" +
+          '<span class="prompt">$</span> cd ' +
+          REPO +
+          "\n" +
+          '<span class="prompt">$</span> python -m venv .venv &amp;&amp; source .venv/bin/activate\n' +
+          '<span class="prompt">$</span> pip install -e ".[dev]"';
+      }
+    })();
+  </script>
+</body>
+</html>
