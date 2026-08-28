@@ -26,6 +26,7 @@ RESTRICTION_LITERALS: dict[str, tuple[str, ...]] = {
     "BamHI": ("GGATCC",),
     "BbsI": ("GAAGAC",),
     "BsaI": ("GGTCTC",),
+    "BseRI": ("GAGGAG",),
     "BstBI": ("TTCGAA",),
     "ClaI": ("ATCGAT",),
     "EagI": ("CGGCCG",),
@@ -41,7 +42,7 @@ RESTRICTION_LITERALS: dict[str, tuple[str, ...]] = {
     "NotI": ("GCGGCCGC",),
     "NruI": ("TCGCGA",),
     "NsiI": ("ATGCAT",),
-    "PaqCI": ("GCTGTCC",),
+    "PaqCI": ("CACCTGC",),
     "PmeI": ("GTTTAAAC",),
     "SacI": ("GAGCTC",),
     "SalI": ("GTCGAC",),
@@ -55,12 +56,11 @@ RESTRICTION_LITERALS: dict[str, tuple[str, ...]] = {
     "XmaI": ("CCCGGG",),
 }
 
-# Degenerate / variable-length: fixed window fullmatch on forward strand or on rc(window).
-RESTRICTION_REGEX: list[tuple[str, str, int]] = [
-    ("BseRI", r"CC[AT]GG", 6),
-    ("BstEII", r"GGT[ACGT]ACC", 9),
-    ("BstXI", r"CCA[ACGT]{6}TGG", 10),
-    ("SfiI", r"GGCC[ACGT]{5}GGCC", 13),
+# Degenerate motifs. Scanned with overlap-aware search on both strands; no hand-kept widths.
+RESTRICTION_REGEX: list[tuple[str, str]] = [
+    ("BstEII", r"GGT[ACGT]ACC"),
+    ("BstXI", r"CCA[ACGT]{6}TGG"),
+    ("SfiI", r"GGCC[ACGT]{5}GGCC"),
 ]
 
 
@@ -71,8 +71,9 @@ def iter_restriction_hits(dna: str) -> Iterator[RestrictionHit]:
     For each literal ``P``, occurrences of ``P`` or ``reverse_complement(P)`` in the
     forward sequence are reported (standard dsDNA cloning interpretation).
 
-    Regex motifs use a sliding window of fixed width; a window matches if the forward
-    pattern or the same pattern applied to ``reverse_complement(window)`` full-matches.
+    Degenerate motifs are searched with the same both-strand convention: the pattern is
+    matched against the forward sequence and against its reverse complement, with reverse
+    hits reported in forward-strand coordinates. Overlapping occurrences are all reported.
     """
     seq = dna.upper()
     n = len(seq)
@@ -106,18 +107,17 @@ def iter_restriction_hits(dna: str) -> Iterator[RestrictionHit]:
                 yield from add_hit(enzyme, idx, idx + len(R), seq[idx : idx + len(R)], "reverse")
                 start = idx + 1
 
-    for enzyme, pat, width in RESTRICTION_REGEX:
-        rx = re.compile(pat)
-        if width > n:
-            continue
-        for i in range(0, n - width + 1):
-            w = seq[i : i + width]
-            if rx.fullmatch(w):
-                yield from add_hit(enzyme, i, i + width, w, "forward")
-                continue
-            wrc = reverse_complement(w)
-            if rx.fullmatch(wrc):
-                yield from add_hit(enzyme, i, i + width, w, "reverse")
+    rc_seq = reverse_complement(seq)
+    for enzyme, pat in RESTRICTION_REGEX:
+        # Lookahead keeps overlapping occurrences, which plain finditer would skip.
+        rx = re.compile(f"(?=({pat}))")
+        for m in rx.finditer(seq):
+            i = m.start(1)
+            yield from add_hit(enzyme, i, i + len(m.group(1)), m.group(1), "forward")
+        for m in rx.finditer(rc_seq):
+            end = n - m.start(1)
+            i = end - len(m.group(1))
+            yield from add_hit(enzyme, i, end, seq[i:end], "reverse")
 
 
 def list_restriction_hits(dna: str) -> list[RestrictionHit]:

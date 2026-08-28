@@ -136,7 +136,7 @@ Smoke tests inject a deterministic codon chooser so CI does not require Hugging 
 ## Known limitations
 
 - **Restriction semantics**: motifs use published core sequences (and degenerate regex where noted). Type IIS enzymes use the **recognition core** only; real manufacturing may need vendor-specific spacing rules.
-- **BseRI**: approximated as `CC[AT]GG` (NEB `CCWGG`).
+- **Degenerate motifs**: `BstEII` (`GGTNACC`), `BstXI` (`CCANNNNNNTGG`) and `SfiI` (`GGCCNNNNNGGCC`) are matched as regexes on both strands; overlapping occurrences are all reported.
 - **SpliceFinder**: original code targets old TensorFlow; TF2 loading may require matching protobuf/`h5` versions. The heuristic backend is always available.
 - **Optimization**: greedy local search with an iteration budget; difficult sequences may retain restriction hits or high splice scores—check `validation_ok` and warnings.
 - **BigBird / long proteins**: CodonTransformer memory scales with length; very long inputs may need chunking (not implemented here).

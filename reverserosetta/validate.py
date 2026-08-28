@@ -119,8 +119,3 @@ def validate_final_sequence(
                 f"{len(bad)} splice signal(s) remain above threshold after optimization."
             )
     return rep
-
-
-def assert_codons_translate_to(dna: str, expected_aa_no_stop: str, *, emit_stop: bool) -> None:
-    """Fast check used inside optimization loops."""
-    validate_translation_matches(dna, expected_aa_no_stop, emit_stop_codon=emit_stop)
